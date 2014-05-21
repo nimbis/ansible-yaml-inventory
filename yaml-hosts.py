@@ -257,6 +257,8 @@ if options.host is not None:
     if options.extra:
         k, v = options.extra.split("=")
         result[k] = v
+    if options.host == 'localhost':
+        result['ansible_python_interpreter'] = sys.executable
     print json.dumps(result)
     sys.exit(0)
 
