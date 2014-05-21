@@ -54,13 +54,16 @@ from optparse import OptionParser
 
 import yaml
 
+
 class Host():
+
     def __init__(self, name):
         self.name = name
         self.groups = []
         self.vars = {}
+
     def __repr__(self):
-        return "Host('%s')"%(self.name)
+        return "Host('%s')" % (self.name)
 
     def set_variable(self, key, value):
         self.vars[key] = value
@@ -68,7 +71,7 @@ class Host():
     def get_variables(self):
         result = {}
         for group in self.groups:
-            for k,v in group.get_variables().items():
+            for k, v in group.get_variables().items():
                 result[k] = v
         for k, v in self.vars.items():
             result[k] = v
@@ -78,6 +81,7 @@ class Host():
         if group not in self.groups:
             self.groups.append(group)
 
+
 class Group():
     def __init__(self, name):
         self.name = name
@@ -85,12 +89,13 @@ class Group():
         self.vars = {}
         self.subgroups = []
         self.parents = []
+
     def __repr__(self):
-        return "Group('%s')"%(self.name)
+        return "Group('%s')" % (self.name)
 
     def get_hosts(self):
         """ List all hosts in this group, including subgroups """
-        result = [ host for host in self.hosts ]
+        result = [host for host in self.hosts]
         for group in self.subgroups:
             for host in group.get_hosts():
                 if host not in result:
@@ -117,24 +122,27 @@ class Group():
     def get_variables(self):
         result = {}
         for group in self.parents:
-            result.update( group.get_variables() )
+            result.update(group.get_variables())
         result.update(self.vars)
         return result
+
 
 def find_group(name, groups):
     for group in groups:
         if name == group.name:
             return group
 
+
 def parse_vars(vars, obj):
     ### vars can be a list of dicts or a dictionary
     if type(vars) == dict:
-        for k,v in vars.items():
+        for k, v in vars.items():
             obj.set_variable(k, v)
     elif type(vars) == list:
         for var in vars:
-            k,v = var.items()[0]
+            k, v = var.items()[0]
             obj.set_variable(k, v)
+
 
 def parse_yaml(yaml_hosts):
     groups = []
@@ -147,7 +155,7 @@ def parse_yaml(yaml_hosts):
     ### groups first, so hosts can be added to 'ungrouped' if necessary
     subgroups = []
     for entry in yaml_hosts:
-        if 'group' in entry and type(entry)==dict:
+        if 'group' in entry and type(entry) == dict:
             group = find_group(entry['group'], groups)
             if not group:
                 group = Group(entry['group'])
@@ -217,7 +225,8 @@ def parse_yaml(yaml_hosts):
     return groups, all_hosts
 
 parser = OptionParser()
-parser.add_option('-l', '--list', default=False, dest="list_hosts", action="store_true")
+parser.add_option('-l', '--list', default=False,
+                  dest="list_hosts", action="store_true")
 parser.add_option('-H', '--host', default=None, dest="host")
 parser.add_option('-e', '--extra-vars', default=None, dest="extra")
 options, args = parser.parse_args()
@@ -226,11 +235,11 @@ base_dir = os.path.dirname(os.path.realpath(__file__))
 hosts_file = os.path.join(base_dir, 'hosts.yml')
 
 with open(hosts_file) as f:
-    yaml_hosts = yaml.load( f.read() )
+    yaml_hosts = yaml.load(f.read())
 
 groups, all_hosts = parse_yaml(yaml_hosts)
 
-if options.list_hosts == True:
+if options.list_hosts is True:
     result = {}
     for group in groups:
         result[group.name] = [host.name for host in group.get_hosts()]
@@ -246,7 +255,7 @@ if options.host is not None:
             break
     result = host.get_variables()
     if options.extra:
-        k,v = options.extra.split("=")
+        k, v = options.extra.split("=")
         result[k] = v
     print json.dumps(result)
     sys.exit(0)
