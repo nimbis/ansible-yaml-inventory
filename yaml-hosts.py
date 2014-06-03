@@ -50,7 +50,7 @@ import json
 import os
 import sys
 
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 import yaml
 
@@ -224,12 +224,12 @@ def parse_yaml(yaml_hosts):
 
     return groups, all_hosts
 
-parser = OptionParser()
-parser.add_option('-l', '--list', default=False,
+parser = ArgumentParser()
+parser.add_argument('-l', '--list', default=False,
                   dest="list_hosts", action="store_true")
-parser.add_option('-H', '--host', default=None, dest="host")
-parser.add_option('-e', '--extra-vars', default=None, dest="extra")
-options, args = parser.parse_args()
+parser.add_argument('-H', '--host', default=None, dest="host")
+parser.add_argument('-e', '--extra-vars', default=None, dest="extra")
+options = parser.parse_args()
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 hosts_file = os.path.join(base_dir, 'hosts.yml')
