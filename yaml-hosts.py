@@ -226,7 +226,7 @@ def parse_yaml(yaml_hosts):
 
 parser = ArgumentParser()
 parser.add_argument('-l', '--list', default=False,
-                  dest="list_hosts", action="store_true")
+                    dest="list_hosts", action="store_true")
 parser.add_argument('-H', '--host', default=None, dest="host")
 parser.add_argument('-e', '--extra-vars', default=None, dest="extra")
 options = parser.parse_args()
